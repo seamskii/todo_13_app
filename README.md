@@ -9,16 +9,19 @@ To install the dependencies, follow the instructions below based on your package
 ### npm
 ```shell
 npm install
+```
 
 ### Yarn
 ```shell
 yarn install
+```
 
 ### Backend Setup
 To run the backend server, execute the following command:
 
 ```shell
 nodemon index
+```
 
 This will start the backend server and make it accessible for the client.
 
@@ -28,18 +31,21 @@ To run the client application, use the commands below based on your package mana
 ### npm
 ```shell
 npm start
+```
 
 ### Yarn
 ```shell
 yarn start
+```
 
 This will start the client application and open it in your default web browser.
 
-##License
+## License
 MIT License
 
 ```csharp
 You can copy and paste this combined version into your README.md file on GitHub.
+```
 
 
 
