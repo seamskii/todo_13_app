@@ -1,71 +1,77 @@
+
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-export const getAllTasks = async (req, res) => {
+export const getAllTasks = async () => {
   try {
-    const response = await prisma.todo13.findMany();
-    res.status(200).json(response);
+    const response = await prisma.task.findMany({
+      where:{
+        isDeleted:false,
+      }
+    });
+    return response;
   } catch (error) {
-    res.status(500).json({ msg: error.message });
+    throw new Error(error.message);
   }
 };
 
-export const getTasksById = async (req, res) => {
+export const getTasksById = async (id) => {
   try {
-    const response = await prisma.todo13.findUnique({
+    const response = await prisma.task.findUnique({
       where: {
-        id: Number(req.params.id),
+        id: Number(id),
       },
     });
-    res.status(200).json(response);
+    return response;
   } catch (error) {
-    res.status(404).json({ msg: error.message });
+    throw new Error(error.message);
   }
 };
 
-export const createTask = async (req, res) => {
-  const { task, completed } = req.body;
+export const createTask = async (task, completed) => {
   try {
-    const newtask = await prisma.todo13.create({
+    const newtask = await prisma.task.create({
       data: {
         task: task,
         completed: completed,
       },
     });
-    res.status(201).json(newtask);
+    return newtask;
   } catch (error) {
-    res.status(400).json({ msg: error.message });
+    throw new Error(error.message);
   }
 };
 
-export const updateTask = async (req, res) => {
-  const { task, completed } = req.body;
+export const updateTask = async (id, task, completed) => {
   try {
-    const updatetask = await prisma.todo13.update({
+    const updatetask = await prisma.task.update({
       where: {
-        id: Number(req.params.id),
+        id: Number(id),
       },
       data: {
         task: task,
         completed: completed,
       },
     });
-    res.status(200).json(updatetask);
+    return updatetask;
   } catch (error) {
-    res.status(400).json({ msg: error.message });
+    throw new Error(error.message);
   }
 };
 
-export const deleteTask = async (req, res) => {
+export const deleteTask = async (id) => {
   try {
-    const deletetask = await prisma.todo13.delete({
+    const deletetask = await prisma.task.update({
       where: {
-        id: Number(req.params.id),
+        id: Number(id),
+      },
+      data: {
+        isDeleted:true,
       },
     });
-    res.status(200).json(deletetask);
+    return deletetask;
   } catch (error) {
-    res.status(400).json({ msg: error.message });
+    throw new Error(error.message);
   }
 };

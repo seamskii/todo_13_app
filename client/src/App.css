@@ -297,16 +297,6 @@ h1 {
   color: #ffffff;
   margin-right: 5px;
 }
-.cornerText {
-  position: absolute;
-  top: 0;
-  left: 0;
-  background: red;
-  color: #fff;
-  padding: 0.25rem;
-  font-weight: bold;
-  font-size: 1rem;
-}
 
 .date {
   color: #66FCF1;

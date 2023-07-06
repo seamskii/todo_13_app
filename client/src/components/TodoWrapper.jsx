@@ -1,36 +1,29 @@
 import React, { useEffect, useState } from "react";
 import { Todo } from "./Todo";
 import { TodoForm } from "./TodoForm";
-import { v4 as uuidv4 } from "uuid";
 import { EditTodoForm } from "./EditTodoForm";
-import axios from "axios";
-import useSWR, { useSWRConfig } from "swr";
-import TodoDropdowns from "./TodoDropdowns";
-import { format } from "date-fns";
+import useSWR from "swr";
+import { getAllTasks, deleteTask, createTask, updateTask } from "./api";
+import { TodoDropdowns } from "./TodoDropdowns";
 
-export const TodoWrapper = ({ todos }) => {
+export const TodoWrapper = () => {
   const [todoLocal, setTodoLocal] = useState([]);
   const [filter, setFilter] = useState("all");
   const [sort, setSort] = useState("id");
   const [direction, setDirection] = useState("asc");
-  const { mutate } = useSWRConfig();
 
   const fetcher = async () => {
-    const response = await axios.get("http://localhost:5000/tasks");
-    return response.data;
+    const response = await getAllTasks();
+    return response;
   };
 
   const { data } = useSWR("tasks", fetcher);
 
   useEffect(() => {
     if (data) {
-      const updatedData = data.map((element) => ({
-        ...element,
-        isEditing: false,
-      }));
-      setTodoLocal(updatedData);
+      setTodoLocal(data);
     }
-  }, [data]);
+  }, [data]); // Empty dependency array
 
   const addTodo = async (task) => {
     try {
@@ -39,25 +32,8 @@ export const TodoWrapper = ({ todos }) => {
         window.alert("Task already exists: " + task);
         return;
       }
-
-      await axios.post("http://localhost:5000/tasks", {
-        task: task,
-        completed: false,
-      });
-
+      await createTask(task);
       fetchData(); // Fetch updated data with new IDs
-
-      const currentDate = new Date();
-      const formattedDate = format(currentDate, "dd/MM/yyyy");
-
-      const newTodo = {
-        id: uuidv4(),
-        task: task,
-        completed: false,
-        createdAt: formattedDate,
-        isEditing: false,
-      };
-      setTodoLocal([...todoLocal, newTodo]);
     } catch (error) {
       console.error("Failed to add task:", error);
     }
@@ -70,13 +46,8 @@ export const TodoWrapper = ({ todos }) => {
         console.error("Todo not found in local state.");
         return;
       }
-
-      setTodoLocal((prevTodoLocal) =>
-        prevTodoLocal.filter((todo) => todo.id !== id)
-      );
-
-      await axios.delete(`http://localhost:5000/tasks/${id}`);
-      mutate("tasks");
+      await deleteTask(id);
+      fetchData();
     } catch (error) {
       console.error("Failed to delete task:", error);
     }
@@ -86,16 +57,8 @@ export const TodoWrapper = ({ todos }) => {
     try {
       const todoToUpdate = todoLocal.find((todo) => todo.id === id);
       const completed = !todoToUpdate.completed;
-
-      await axios.patch(`http://localhost:5000/tasks/${id}`, {
-        completed: completed,
-      });
-
-      setTodoLocal((prevTodoLocal) =>
-        prevTodoLocal.map((todo) =>
-          todo.id === id ? { ...todo, completed: completed } : todo
-        )
-      );
+      await updateTask(id, todoToUpdate.task, completed);
+      fetchData();
     } catch (error) {
       console.error("Failed to update task:", error);
     }
@@ -109,14 +72,12 @@ export const TodoWrapper = ({ todos }) => {
     );
   };
 
-  const editTask = async (task, id) => {
+  const editTask = async (id, task) => {
     try {
       const existingTodo = todoLocal.find((todo) => todo.id === id);
-
-      await axios.patch(`http://localhost:5000/tasks/${id}`, {
-        task: task,
-        completed: existingTodo.task === task ? existingTodo.completed : false,
-      });
+      const currentTaskStatus =
+        existingTodo.task === task ? existingTodo.completed : false;
+      await updateTask(id, task, currentTaskStatus);
 
       setTodoLocal((prevTodoLocal) =>
         prevTodoLocal.map((todo) =>
@@ -124,7 +85,7 @@ export const TodoWrapper = ({ todos }) => {
             ? {
                 ...todo,
                 task: task,
-                completed: existingTodo.task === task ? todo.completed : false,
+                completed: currentTaskStatus,
                 isEditing: !todo.isEditing,
               }
             : todo
@@ -137,20 +98,9 @@ export const TodoWrapper = ({ todos }) => {
 
   const fetchData = async () => {
     const updatedData = await fetcher();
-    setTodoLocal((prevTodoLocal) => {
-      const updatedTodoLocal = [...prevTodoLocal];
-
-      updatedData.forEach((dataItem) => {
-        const existingTodo = updatedTodoLocal.find(
-          (todo) => todo.task === dataItem.task
-        );
-        if (existingTodo) {
-          existingTodo.id = dataItem.id;
-        }
-      });
-
-      return updatedTodoLocal;
-    });
+    if (updatedData) {
+      setTodoLocal(updatedData);
+    }
   };
 
   const handleFilterChange = (e) => {
@@ -207,6 +157,7 @@ export const TodoWrapper = ({ todos }) => {
     <div className="TodoWrapper">
       <h1>Get Things Done!</h1>
       <TodoDropdowns
+        todoLocal={todoLocal}
         filter={filter}
         handleFilterChange={handleFilterChange}
         sort={sort}

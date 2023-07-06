@@ -1,6 +1,7 @@
 import React from "react";
 
-const TodoDropdowns = ({
+export const TodoDropdowns = ({
+  todoLocal,
   filter,
   handleFilterChange,
   sort,
@@ -8,14 +9,21 @@ const TodoDropdowns = ({
   direction,
   handleDirectionChange,
 }) => {
+  const completedTasks = todoLocal.filter((el) => el.completed === true);
+  const uncompletedTasks = todoLocal.filter((el) => el.completed === false);
+
   return (
     <div className="TodoDropdowns">
       <div>
         <label htmlFor="filter">Filter: </label>
         <select id="filter" value={filter} onChange={handleFilterChange}>
-          <option value="all">Show all tasks</option>
-          <option value="completed">Filter by completed</option>
-          <option value="uncompleted">Filter by uncompleted</option>
+          <option value="all">Show all tasks #{todoLocal.length} </option>
+          <option value="completed">
+            Filter by completed #{completedTasks.length}
+          </option>
+          <option value="uncompleted">
+            Filter by uncompleted #{uncompletedTasks.length}
+          </option>
         </select>
       </div>
       <div>
@@ -41,5 +49,3 @@ const TodoDropdowns = ({
     </div>
   );
 };
-
-export default TodoDropdowns;

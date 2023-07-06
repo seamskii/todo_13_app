@@ -10,9 +10,10 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model todo13{
+model Task{
   id Int @id @default(autoincrement())
   task String   @db.VarChar(255)
   completed Boolean  @default(false)
   createdAt DateTime @default(now())
+  isDeleted Boolean  @default(false)
 }
