@@ -35,7 +35,7 @@ h1 {
   width: 100%;
 }
 
-.todo-input {
+.task-input {
   outline: none;
   background: none;
   border: 1px solid #45A29E;
@@ -46,11 +46,11 @@ h1 {
   color: #fff;
 }
 
-.todo-input::placeholder {
+.task-input::placeholder {
   color: #C5C6C7;
 }
 
-.todo-btn {
+.task-btn {
   background: #45A29E;
   color: #fff;
   border: none;
@@ -124,7 +124,7 @@ h1 {
     padding: 1rem;
   }
 
-  .todo-input {
+  .task-input {
     width: 100%;
   }
 }
@@ -208,10 +208,13 @@ h1 {
   background: #0B0C10;
   padding: 2rem;
   border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 .TodoDropdowns div {
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
 }
 
 .TodoDropdowns label {
@@ -223,42 +226,28 @@ h1 {
   color: #fff;
   border: none;
   padding: 5px;
-  width: 200px;
+  width: 100%;
+  max-width: 200px;
 }
 
-/* Media Queries */
-
-@media only screen and (max-width: 600px) {
-  .TodoDropdowns {
-    padding: 1rem;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .TodoDropdowns div {
-    margin-bottom: 0.5rem;
-  }
-}
+/* Media Queries for TodoDropdowns */
 
 @media only screen and (min-width: 601px) {
   .TodoDropdowns {
-    display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
   }
 
   .TodoDropdowns div {
-    margin-left:15px;
     margin-bottom: 0;
+    margin-left: 15px;
   }
 
   .TodoDropdowns select {
     margin-left: 1rem;
   }
 }
-
 /* Flex Container and Items */
 
 .flex-container {

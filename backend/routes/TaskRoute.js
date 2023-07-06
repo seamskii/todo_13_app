@@ -1,5 +1,5 @@
 import express from 'express';
-import { getAllTasksHandler, getTaskByIdHandler, createTaskHandler, updateTaskHandler, deleteTaskHandler } from '../controllers/TaskLogic.js';
+import { getAllTasksHandler, getTaskByIdHandler, createTaskHandler, updateTaskHandler, deleteTaskHandler } from '../controllers/TaskController.js';
 
 const router = express.Router();
 

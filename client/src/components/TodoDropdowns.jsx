@@ -1,7 +1,8 @@
 import React from "react";
+import Select from "react-select";
 
 export const TodoDropdowns = ({
-  todoLocal,
+  taskLocal,
   filter,
   handleFilterChange,
   sort,
@@ -9,42 +10,55 @@ export const TodoDropdowns = ({
   direction,
   handleDirectionChange,
 }) => {
-  const completedTasks = todoLocal.filter((el) => el.completed === true);
-  const uncompletedTasks = todoLocal.filter((el) => el.completed === false);
+  const completedTasks = taskLocal.filter((el) => el.completed === true);
+  const uncompletedTasks = taskLocal.filter((el) => el.completed === false);
+
+  const filterOptions = [
+    { value: "all", label: `Show all tasks #${taskLocal.length}` },
+    { value: "completed", label: `Filter by completed #${completedTasks.length}` },
+    { value: "uncompleted", label: `Filter by uncompleted #${uncompletedTasks.length}` },
+  ];
+
+  const sortOptions = [
+    { value: "id", label: "Sort by task ID" },
+    { value: "status", label: "Sort by task status" },
+    { value: "date", label: "Sort by Date" },
+    { value: "description", label: "Sort by description" },
+  ];
+
+  const directionOptions = [
+    { value: "asc", label: "ASC" },
+    { value: "desc", label: "DESC" },
+  ];
 
   return (
     <div className="TodoDropdowns">
       <div>
         <label htmlFor="filter">Filter: </label>
-        <select id="filter" value={filter} onChange={handleFilterChange}>
-          <option value="all">Show all tasks #{todoLocal.length} </option>
-          <option value="completed">
-            Filter by completed #{completedTasks.length}
-          </option>
-          <option value="uncompleted">
-            Filter by uncompleted #{uncompletedTasks.length}
-          </option>
-        </select>
+        <Select
+          id="filter"
+          options={filterOptions}
+          value={filterOptions.find((option) => option.value === filter)}
+          onChange={(selectedOption) => handleFilterChange(selectedOption.value)}
+        />
       </div>
       <div>
         <label htmlFor="sort">Sort: </label>
-        <select id="sort" value={sort} onChange={handleSortChange}>
-          <option value="id">Sort by task ID</option>
-          <option value="status">Sort by task status</option>
-          <option value="date">Sort by Date</option>
-          <option value="description">Sort by description</option>
-        </select>
+        <Select
+          id="sort"
+          options={sortOptions}
+          value={sortOptions.find((option) => option.value === sort)}
+          onChange={(selectedOption) => handleSortChange(selectedOption.value)}
+        />
       </div>
       <div>
         <label htmlFor="direction">Direction: </label>
-        <select
+        <Select
           id="direction"
-          value={direction}
-          onChange={handleDirectionChange}
-        >
-          <option value="asc">ASC</option>
-          <option value="desc">DESC</option>
-        </select>
+          options={directionOptions}
+          value={directionOptions.find((option) => option.value === direction)}
+          onChange={(selectedOption) => handleDirectionChange(selectedOption.value)}
+        />
       </div>
     </div>
   );

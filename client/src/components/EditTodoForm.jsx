@@ -6,7 +6,7 @@ export const EditTodoForm = ({ editTodo, task }) => {
   const handleSubmit = (e) => {
     // prevent default action
     e.preventDefault();
-    // edit todo
+    // edit task
     editTodo(task.id,value,task.completed);
   };
   return (
@@ -15,10 +15,10 @@ export const EditTodoForm = ({ editTodo, task }) => {
         type="text"
         value={value}
         onChange={(e) => setValue(e.target.value)}
-        className="todo-input"
+        className="task-input"
         placeholder="Update task"
       />
-      <button type="submit" className="todo-btn">
+      <button type="submit" className="task-btn">
         Add Task
       </button>
     </form>

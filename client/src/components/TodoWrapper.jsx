@@ -3,31 +3,26 @@ import { Todo } from "./Todo";
 import { TodoForm } from "./TodoForm";
 import { EditTodoForm } from "./EditTodoForm";
 import useSWR from "swr";
-import { getAllTasks, deleteTask, createTask, updateTask } from "./api";
+import { getAllTasks, deleteTask, createTask, updateTask } from "../api";
 import { TodoDropdowns } from "./TodoDropdowns";
 
 export const TodoWrapper = () => {
-  const [todoLocal, setTodoLocal] = useState([]);
+  const [taskLocal, setTaskLocal] = useState([]);
   const [filter, setFilter] = useState("all");
   const [sort, setSort] = useState("id");
   const [direction, setDirection] = useState("asc");
 
-  const fetcher = async () => {
-    const response = await getAllTasks();
-    return response;
-  };
-
-  const { data } = useSWR("tasks", fetcher);
+  const { data } = useSWR("tasks", getAllTasks);
 
   useEffect(() => {
     if (data) {
-      setTodoLocal(data);
+      setTaskLocal(data);
     }
   }, [data]); // Empty dependency array
 
   const addTodo = async (task) => {
     try {
-      const existingTodo = todoLocal.find((todo) => todo.task === task);
+      const existingTodo = taskLocal.find((todo) => todo.task === task);
       if (existingTodo) {
         window.alert("Task already exists: " + task);
         return;
@@ -41,7 +36,7 @@ export const TodoWrapper = () => {
 
   const deleteTodo = async (id) => {
     try {
-      const existingTodo = todoLocal.find((todo) => todo.id === id);
+      const existingTodo = taskLocal.find((todo) => todo.id === id);
       if (!existingTodo) {
         console.error("Todo not found in local state.");
         return;
@@ -55,9 +50,9 @@ export const TodoWrapper = () => {
 
   const toggleComplete = async (id) => {
     try {
-      const todoToUpdate = todoLocal.find((todo) => todo.id === id);
-      const completed = !todoToUpdate.completed;
-      await updateTask(id, todoToUpdate.task, completed);
+      const taskToUpdate = taskLocal.find((todo) => todo.id === id);
+      const completed = !taskToUpdate.completed;
+      await updateTask(id, taskToUpdate.task, completed);
       fetchData();
     } catch (error) {
       console.error("Failed to update task:", error);
@@ -65,7 +60,7 @@ export const TodoWrapper = () => {
   };
 
   const editTodo = (id) => {
-    setTodoLocal((prevTodoLocal) =>
+    setTaskLocal((prevTodoLocal) =>
       prevTodoLocal.map((todo) =>
         todo.id === id ? { ...todo, isEditing: !todo.isEditing } : todo
       )
@@ -74,12 +69,12 @@ export const TodoWrapper = () => {
 
   const editTask = async (id, task) => {
     try {
-      const existingTodo = todoLocal.find((todo) => todo.id === id);
+      const existingTodo = taskLocal.find((todo) => todo.id === id);
       const currentTaskStatus =
         existingTodo.task === task ? existingTodo.completed : false;
       await updateTask(id, task, currentTaskStatus);
 
-      setTodoLocal((prevTodoLocal) =>
+      setTaskLocal((prevTodoLocal) =>
         prevTodoLocal.map((todo) =>
           todo.id === id
             ? {
@@ -97,25 +92,25 @@ export const TodoWrapper = () => {
   };
 
   const fetchData = async () => {
-    const updatedData = await fetcher();
+    const updatedData = await getAllTasks();
     if (updatedData) {
-      setTodoLocal(updatedData);
+      setTaskLocal(updatedData);
     }
   };
 
-  const handleFilterChange = (e) => {
-    setFilter(e.target.value);
+  const handleFilterChange = (value) => {
+    setFilter(value);
   };
 
-  const handleSortChange = (e) => {
-    setSort(e.target.value);
+  const handleSortChange = (value) => {
+    setSort(value);
   };
 
-  const handleDirectionChange = (e) => {
-    setDirection(e.target.value);
+  const handleDirectionChange = (value) => {
+    setDirection(value);
   };
 
-  const filteredAndSortedTodos = todoLocal
+  const filteredAndSortedTodos = taskLocal
     .filter((todo) => {
       if (filter === "completed") {
         return todo.completed;
@@ -157,7 +152,7 @@ export const TodoWrapper = () => {
     <div className="TodoWrapper">
       <h1>Get Things Done!</h1>
       <TodoDropdowns
-        todoLocal={todoLocal}
+        taskLocal={taskLocal}
         filter={filter}
         handleFilterChange={handleFilterChange}
         sort={sort}
