@@ -236,6 +236,7 @@ h1 {
   .TodoDropdowns {
     flex-direction: row;
     justify-content: space-between;
+    margin-right: 3rem;
     align-items: center;
   }
 
